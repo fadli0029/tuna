@@ -1,4 +1,4 @@
-My reimplementations of the C++ standard libraries containers/<???> for understanding and learning purposes.
+My reimplementations of various stuff from the C++ standard library, whichever ones I find I'd learn the most from by building from scratch. Basically this is for my learning and understanding purposes (I attempted implementing `std::vector` from scratch a while ago when I first read Stroustrup's PPP book, oh man I learn a lot just from that attempt).
 
 Why call it `tuna`? Well I don't know. I know I like fish though. Tuna is just one of many fish types I like. I reserve other fish names for my other projects in the future.
 
