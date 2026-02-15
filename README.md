@@ -1,16 +1,27 @@
-My reimplementations of various stuff from the C++ standard library, whichever ones I find I'd learn the most from by building from scratch. Basically this is for my learning and understanding purposes (I attempted implementing `std::vector` from scratch a while ago when I first read Stroustrup's PPP book, oh man I learn a lot just from that attempt).
+My implementation of various stuff from the C++ standard library, whichever ones I find I'd learn the most from by building from scratch. Basically this is for my learning and understanding purposes (I attempted implementing `std::vector` from scratch a while ago when I first read Stroustrup's PPP book, oh man I learn a lot just from that attempt).
+
+To be clear, tuna reimplements the standard library API (the libc++ layer: containers, smart pointers, utilities, etc.), not the ABI runtime (the libc++abi layer: exception handling, RTTI, stack unwinding, etc.). The ABI layer is the foundation the language itself sits on; tuna builds on top of it.
 
 Why call it `tuna`? Well I don't know. I know I like fish though. Tuna is just one of many fish types I like. I reserve other fish names for my other projects in the future.
 
-# In progress
-- [ ] `tuna::allocator`: implementation of the `std::allocator` + `allocator_traits` interface
-
 # TODO's
-- [ ] `tuna::vector`: implementation of `std::vector`
-- [ ] `tuna::unique_ptr`: implementation of `std::unique_ptr`
-- [ ] `tuna::shared_ptr` + `tuna::weak_ptr`: implementation of `std::shared_ptr` + `std::weak_ptr`
-- [ ] `tuna::string`: implementation of `std::string`
-- [ ] `tuna::optional`: implementation of `std::optional`
-- [ ] `tuna::function`: implementation of `std::function`
-- [ ] `tuna::expected`: implementation of `std::expected`
-- [ ] `type_traits`: implementation of the standard library `type_traits` header
+
+- [ ] `tuna::vector`
+- [ ] `tuna::unique_ptr`
+- [ ] `tuna::optional`
+- [ ] `tuna::variant`
+- [ ] `tuna::string`
+- [ ] `tuna::string_view`
+- [ ] `tuna::span`
+- [ ] `tuna::allocator` + `allocator_traits`
+- [ ] `tuna::shared_ptr` + `tuna::weak_ptr`
+- [ ] `tuna::function`
+- [ ] `tuna::any`
+- [ ] `tuna::expected`
+- [ ] `tuna::tuple`
+
+# Regarding The Implementation Order
+
+The order above is intentional (though it may be subject to changes). The idea is to build the concrete thing first, feel the problems it has, then build the abstraction that solves those problems. For example, allocator comes after containers (not before) because I feel i can understand/appreciate better what an allocator abstracts *after* I've manually managed memory inside a container. But of course going the other also works, this is just my preference.
+
+Note that `type_traits` are not listed as a standalone item. I plan to build them incrementally: when `tuna::vector` needs `std::is_nothrow_move_constructible` to decide between move and copy during reallocation, I implement that trait. When `tuna::unique_ptr` needs `std::remove_extent` for array support, I implement it. By the end of the list, I think quite a lot of stuff from `<type_traits>` will have been built, each trait motivated by a clear use case.
