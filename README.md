@@ -4,13 +4,25 @@ To be clear, tuna reimplements the standard library API (the libc++ layer: conta
 
 Why call it `tuna`? Well I don't know. I know I like fish though. Tuna is just one of many fish types I like. I reserve other fish names for my other projects in the future.
 
+# Design decisions/Remarks
+- `tuna` does not and will not support backward compatibility. This is intentional as `tuna` is meant to target the latest C++ standard, not maintain compatibility with older ones.
+- `tuna` intends to always be up-to-date with the evolution of C++, meaning: once compiler support for C++26 matures, `tuna` will make an effort to update its implementations.
+- `tuna` will intentionally omit features that are removed or not present in C++23. For example, according to [cppreference](https://en.cppreference.com/w/cpp/memory/allocator.html), the member function `address` for `std::allocator` only exists until C++20. So, `tuna::allocator` will not have `address` as one of its member functions.
+- `tuna` prioritizes clean, easy-to-follow implementations, but never at the cost of correctness.
+- `tuna` additionally implements the [named requirements](https://en.cppreference.com/w/cpp/named_req.html) (as defined in [[res.on.requirements](https://eel.is/c++draft/res.on.requirements)]) as concepts. The standard describes these as prose/table-based requirements; `tuna` expresses them as actual concepts, in the spirit of a cleaner, more educational implementation.
+- ...
+
 # Credits
 
+- The C++ standard draft: [eel.is/c++draft](https://eel.is/c++draft/), the primary reference for how things should behave.
+- [cppreference.com](https://en.cppreference.com/), for its excellent documentation and examples.
+- [LLVM's libc++](https://github.com/llvm/llvm-project/tree/main/libcxx), for being an invaluable reference implementation to study and learn from.
 - CMake build infrastructure: [cpp-best-practices/cmake_template](https://github.com/cpp-best-practices/cmake_template) by Jason Turner. Files under `cmake/`, `ProjectOptions.cmake`, `Dependencies.cmake`, `CMakePresets.json`, and `configured_files/` come from that template (`myproject` renamed to `tuna`, unneeded deps stripped).
 - ...
 
 # TODO's
 
+- [ ] `tuna::allocator` + `allocator_traits`
 - [ ] `tuna::vector`
 - [ ] `tuna::unique_ptr`
 - [ ] `tuna::optional`
@@ -18,16 +30,11 @@ Why call it `tuna`? Well I don't know. I know I like fish though. Tuna is just o
 - [ ] `tuna::string`
 - [ ] `tuna::string_view`
 - [ ] `tuna::span`
-- [ ] `tuna::allocator` + `allocator_traits`
 - [ ] `tuna::shared_ptr` + `tuna::weak_ptr`
 - [ ] `tuna::function`
 - [ ] `tuna::any`
 - [ ] `tuna::expected`
 - [ ] `tuna::tuple`
 - [ ] ...
-
-# Regarding The Implementation Order
-
-The order above is intentional (though it may be subject to changes). The idea is to build the concrete thing first, feel the problems it has, then build the abstraction that solves those problems. For example, allocator comes after containers (not before) because I feel I can understand/appreciate better what an allocator abstracts *after* I've manually managed memory inside a container. But of course going the other way also works, this is just my preference.
 
 Note that `type_traits` are not listed as a standalone item. I plan to build them incrementally: when `tuna::vector` needs `std::is_nothrow_move_constructible` to decide between move and copy during reallocation, I implement that trait. When `tuna::unique_ptr` needs `std::remove_extent` for array support, I implement it. By the end of the list, I think quite a lot of stuff from `<type_traits>` will have been built, each trait motivated by a clear use case.
