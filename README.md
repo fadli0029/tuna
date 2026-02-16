@@ -9,7 +9,7 @@ Why call it `tuna`? Well I don't know. I know I like fish though. Tuna is just o
 - `tuna` intends to always be up-to-date with the evolution of C++, meaning: once compiler support for C++26 matures, `tuna` will make an effort to update its implementations.
 - `tuna` will intentionally omit features that are removed or not present in C++23. For example, according to [cppreference](https://en.cppreference.com/w/cpp/memory/allocator.html), the member function `address` for `std::allocator` only exists until C++20. So, `tuna::allocator` will not have `address` as one of its member functions.
 - `tuna` prioritizes clean, easy-to-follow implementations, but never at the cost of correctness.
-- `tuna` additionally implements the [named requirements](https://en.cppreference.com/w/cpp/named_req.html) (as defined in [[res.on.requirements](https://eel.is/c++draft/res.on.requirements)]) as concepts. The standard describes these as prose/table-based requirements; `tuna` expresses them as actual concepts, in the spirit of a cleaner, more educational implementation.
+- `tuna` additionally implements the [named requirements](https://en.cppreference.com/w/cpp/named_req.html) as concepts. The standard describes these as prose/table-based requirements; `tuna` expresses them as actual concepts, in the spirit of a cleaner, more educational implementation.
 - ...
 
 # Credits
@@ -37,4 +37,4 @@ Why call it `tuna`? Well I don't know. I know I like fish though. Tuna is just o
 - [ ] `tuna::tuple`
 - [ ] ...
 
-Note that `type_traits` are not listed as a standalone item. I plan to build them incrementally: when `tuna::vector` needs `std::is_nothrow_move_constructible` to decide between move and copy during reallocation, I implement that trait. When `tuna::unique_ptr` needs `std::remove_extent` for array support, I implement it. By the end of the list, I think quite a lot of stuff from `<type_traits>` will have been built, each trait motivated by a clear use case.
+Note that at the time of writing, there is no plan for `tuna` to implement the standard library's `type_traits`. This may change in the future, but for now, I do not intend to implement it.
