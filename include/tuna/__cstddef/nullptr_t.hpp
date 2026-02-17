@@ -6,8 +6,8 @@
 // Reference: https://en.cppreference.com/w/cpp/types/nullptr_t
 // libc++: https://github.com/llvm/llvm-project/blob/main/libcxx/include/__cstddef/nullptr_t.h
 
-#ifndef TUNA___CSTDDEF_NULLPTR_T_HPP
-#define TUNA___CSTDDEF_NULLPTR_T_HPP
+#ifndef TUNA_CSTDDEF_NULLPTR_T_HPP
+#define TUNA_CSTDDEF_NULLPTR_T_HPP
 
 #include <tuna/__config.hpp>
 
@@ -19,4 +19,4 @@ using nullptr_t = decltype(nullptr);
 
 TUNA_NAMESPACE_END
 
-#endif  // TUNA___CSTDDEF_NULLPTR_T_HPP
+#endif  // TUNA_CSTDDEF_NULLPTR_T_HPP
