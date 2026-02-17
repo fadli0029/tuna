@@ -24,7 +24,7 @@ One last thing, you will notice that I use "I" and "we" interchangeably througho
 - The C++ standard draft: [eel.is/c++draft](https://eel.is/c++draft/), the primary reference for how things should behave.
 - [cppreference.com](https://en.cppreference.com/), for its excellent documentation and examples.
 - [LLVM's libc++](https://github.com/llvm/llvm-project/tree/main/libcxx), for being an invaluable reference implementation to study and learn from.
-- CMake build infrastructure: [cpp-best-practices/cmake_template](https://github.com/cpp-best-practices/cmake_template) by Jason Turner. Files under `cmake/`, `ProjectOptions.cmake`, `Dependencies.cmake`, `CMakePresets.json`, and `configured_files/` come from that template (`myproject` renamed to `tuna`, unneeded deps stripped, etc.).
+- CMake build infrastructure: [cpp-best-practices/cmake_template](https://github.com/cpp-best-practices/cmake_template) by Jason Turner. Files under `cmake/`, `ProjectOptions.cmake`, `Dependencies.cmake`, and `CMakePresets.json` come from that template (`myproject` renamed to `tuna`, unneeded deps stripped, etc.).
 - ...
 
 # Regarding AI Usage
