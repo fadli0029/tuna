@@ -1,4 +1,3 @@
-include(cmake/SystemLink.cmake)
 include(cmake/LibFuzzer.cmake)
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
@@ -6,7 +5,7 @@ include(CheckCXXSourceCompiles)
 
 
 macro(tuna_supports_sanitizers)
-  if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*") AND NOT WIN32)
+  if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*")
 
     message(STATUS "Sanity checking UndefinedBehaviorSanitizer, it should be supported on this platform")
     set(TEST_PROGRAM "int main() { return 0; }")
@@ -26,33 +25,24 @@ macro(tuna_supports_sanitizers)
     set(SUPPORTS_UBSAN OFF)
   endif()
 
-  if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*" OR CMAKE_CXX_COMPILER_ID MATCHES ".*GNU.*") AND WIN32)
-    set(SUPPORTS_ASAN OFF)
+  message(STATUS "Sanity checking AddressSanitizer, it should be supported on this platform")
+  set(TEST_PROGRAM "int main() { return 0; }")
+
+  set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
+  set(CMAKE_REQUIRED_LINK_OPTIONS "-fsanitize=address")
+  check_cxx_source_compiles("${TEST_PROGRAM}" HAS_ASAN_LINK_SUPPORT)
+
+  if(HAS_ASAN_LINK_SUPPORT)
+    message(STATUS "AddressSanitizer is supported at both compile and link time.")
+    set(SUPPORTS_ASAN ON)
   else()
-    if(NOT WIN32)
-      message(STATUS "Sanity checking AddressSanitizer, it should be supported on this platform")
-      set(TEST_PROGRAM "int main() { return 0; }")
-
-      set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
-      set(CMAKE_REQUIRED_LINK_OPTIONS "-fsanitize=address")
-      check_cxx_source_compiles("${TEST_PROGRAM}" HAS_ASAN_LINK_SUPPORT)
-
-      if(HAS_ASAN_LINK_SUPPORT)
-        message(STATUS "AddressSanitizer is supported at both compile and link time.")
-        set(SUPPORTS_ASAN ON)
-      else()
-        message(WARNING "AddressSanitizer is NOT supported at link time.")
-        set(SUPPORTS_ASAN OFF)
-      endif()
-    else()
-      set(SUPPORTS_ASAN ON)
-    endif()
+    message(WARNING "AddressSanitizer is NOT supported at link time.")
+    set(SUPPORTS_ASAN OFF)
   endif()
 endmacro()
 
 macro(tuna_setup_options)
   option(tuna_ENABLE_HARDENING "Enable hardening" ON)
-  option(tuna_ENABLE_COVERAGE "Enable coverage reporting" OFF)
   cmake_dependent_option(
     tuna_ENABLE_GLOBAL_HARDENING
     "Attempt to push hardening options to built dependencies"
@@ -62,7 +52,7 @@ macro(tuna_setup_options)
 
   tuna_supports_sanitizers()
 
-  if(NOT PROJECT_IS_TOP_LEVEL OR tuna_PACKAGING_MAINTAINER_MODE)
+  if(NOT PROJECT_IS_TOP_LEVEL)
     option(tuna_ENABLE_IPO "Enable IPO/LTO" OFF)
     option(tuna_WARNINGS_AS_ERRORS "Treat Warnings As Errors" OFF)
     option(tuna_ENABLE_SANITIZER_ADDRESS "Enable address sanitizer" OFF)
@@ -70,10 +60,7 @@ macro(tuna_setup_options)
     option(tuna_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" OFF)
     option(tuna_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
     option(tuna_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
-    option(tuna_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
     option(tuna_ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
-    option(tuna_ENABLE_CPPCHECK "Enable cpp-check analysis" OFF)
-    option(tuna_ENABLE_PCH "Enable precompiled headers" OFF)
     option(tuna_ENABLE_CACHE "Enable ccache" OFF)
   else()
     option(tuna_ENABLE_IPO "Enable IPO/LTO" ON)
@@ -83,10 +70,7 @@ macro(tuna_setup_options)
     option(tuna_ENABLE_SANITIZER_UNDEFINED "Enable undefined sanitizer" ${SUPPORTS_UBSAN})
     option(tuna_ENABLE_SANITIZER_THREAD "Enable thread sanitizer" OFF)
     option(tuna_ENABLE_SANITIZER_MEMORY "Enable memory sanitizer" OFF)
-    option(tuna_ENABLE_UNITY_BUILD "Enable unity builds" OFF)
     option(tuna_ENABLE_CLANG_TIDY "Enable clang-tidy" ON)
-    option(tuna_ENABLE_CPPCHECK "Enable cpp-check analysis" ON)
-    option(tuna_ENABLE_PCH "Enable precompiled headers" OFF)
     option(tuna_ENABLE_CACHE "Enable ccache" ON)
   endif()
 
@@ -99,11 +83,7 @@ macro(tuna_setup_options)
       tuna_ENABLE_SANITIZER_UNDEFINED
       tuna_ENABLE_SANITIZER_THREAD
       tuna_ENABLE_SANITIZER_MEMORY
-      tuna_ENABLE_UNITY_BUILD
       tuna_ENABLE_CLANG_TIDY
-      tuna_ENABLE_CPPCHECK
-      tuna_ENABLE_COVERAGE
-      tuna_ENABLE_PCH
       tuna_ENABLE_CACHE)
   endif()
 
@@ -124,8 +104,6 @@ macro(tuna_global_options)
     tuna_enable_ipo()
   endif()
 
-  tuna_supports_sanitizers()
-
   if(tuna_ENABLE_HARDENING AND tuna_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)
     if(NOT SUPPORTS_UBSAN
@@ -137,7 +115,6 @@ macro(tuna_global_options)
     else()
       set(ENABLE_UBSAN_MINIMAL_RUNTIME TRUE)
     endif()
-    message("${tuna_ENABLE_HARDENING} ${ENABLE_UBSAN_MINIMAL_RUNTIME} ${tuna_ENABLE_SANITIZER_UNDEFINED}")
     tuna_enable_hardening(tuna_options ON ${ENABLE_UBSAN_MINIMAL_RUNTIME})
   endif()
 endmacro()
@@ -155,11 +132,7 @@ macro(tuna_local_options)
     tuna_warnings
     ${tuna_WARNINGS_AS_ERRORS}
     ""
-    ""
-    ""
     "")
-
-  include(cmake/Linker.cmake)
 
   include(cmake/Sanitizers.cmake)
   tuna_enable_sanitizers(
@@ -169,17 +142,6 @@ macro(tuna_local_options)
     ${tuna_ENABLE_SANITIZER_UNDEFINED}
     ${tuna_ENABLE_SANITIZER_THREAD}
     ${tuna_ENABLE_SANITIZER_MEMORY})
-
-  set_target_properties(tuna_options PROPERTIES UNITY_BUILD ${tuna_ENABLE_UNITY_BUILD})
-
-  if(tuna_ENABLE_PCH)
-    target_precompile_headers(
-      tuna_options
-      INTERFACE
-      <vector>
-      <string>
-      <utility>)
-  endif()
 
   if(tuna_ENABLE_CACHE)
     include(cmake/Cache.cmake)
@@ -191,22 +153,6 @@ macro(tuna_local_options)
     tuna_enable_clang_tidy(tuna_options ${tuna_WARNINGS_AS_ERRORS})
   endif()
 
-  if(tuna_ENABLE_CPPCHECK)
-    tuna_enable_cppcheck(${tuna_WARNINGS_AS_ERRORS} "")
-  endif()
-
-  if(tuna_ENABLE_COVERAGE)
-    include(cmake/Tests.cmake)
-    tuna_enable_coverage(tuna_options)
-  endif()
-
-  if(tuna_WARNINGS_AS_ERRORS)
-    check_cxx_compiler_flag("-Wl,--fatal-warnings" LINKER_FATAL_WARNINGS)
-    if(LINKER_FATAL_WARNINGS)
-      # This is not working consistently, so disabling for now
-      # target_link_options(tuna_options INTERFACE -Wl,--fatal-warnings)
-    endif()
-  endif()
 
   if(tuna_ENABLE_HARDENING AND NOT tuna_ENABLE_GLOBAL_HARDENING)
     include(cmake/Hardening.cmake)

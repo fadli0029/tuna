@@ -8,5 +8,3 @@
 #     tuna::tuna
 #     benchmark::benchmark
 #     benchmark::benchmark_main)
-#
-# tuna_configure_linker(vector_bench)
