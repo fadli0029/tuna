@@ -7,10 +7,24 @@
 // that need to be visible across the entire library. Right now it's
 // minimal, it'll grow as the library does.
 
-#ifndef TUNA___CONFIG_HPP
-#define TUNA___CONFIG_HPP
+#ifndef TUNA_CONFIG_HPP
+#define TUNA_CONFIG_HPP
 
 #define TUNA_NAMESPACE_BEGIN namespace tuna {
 #define TUNA_NAMESPACE_END }
 
-#endif  // TUNA___CONFIG_HPP
+// sizeof(T) >= 0 is always true since sizeof returns a size_t (unsigned).
+// Since sizeof is ill-formed on an incomplete type, if T is
+// incomplete, the compiler rejects sizeof(T) before the comparison ever
+// happens. The optional message is never shown in the compiler diagnostic
+// (sizeof fails first), it's just for developers reading the call site.
+// As for the `...` and `__VA_OPT__`: the `...` captures zero or more extra
+// arguments into `__VA_ARGS__`. `__VA_OPT__(, __VA_ARGS__)` (C++20) expands
+// to nothing when no extra arguments are given, or to `, "the message"` when
+// one is provided. This lets the macro work both ways:
+//  TUNA_ASSERT_COMPLETE_TYPE(T)         -> static_assert(sizeof(T) >= 0)
+//  TUNA_ASSERT_COMPLETE_TYPE(T, "msg")  -> static_assert(sizeof(T) >= 0, "msg")
+#define TUNA_ASSERT_COMPLETE_TYPE(T, ...) \
+  static_assert(sizeof(T) >= 0 __VA_OPT__(, __VA_ARGS__))
+
+#endif  // TUNA_CONFIG_HPP

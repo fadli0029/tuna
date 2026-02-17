@@ -5,10 +5,11 @@
 //
 // Standard: [support.types.layout] https://eel.is/c++draft/support.types.layout
 // Reference: https://en.cppreference.com/w/cpp/types/max_align_t
-// libc++: https://github.com/llvm/llvm-project/blob/main/libcxx/include/__cstddef/max_align_t.h
+// libc++:
+// https://github.com/llvm/llvm-project/blob/main/libcxx/include/__cstddef/max_align_t.h
 
-#ifndef TUNA___CSTDDEF_MAX_ALIGN_T_HPP
-#define TUNA___CSTDDEF_MAX_ALIGN_T_HPP
+#ifndef TUNA_CSTDDEF_MAX_ALIGN_T_HPP
+#define TUNA_CSTDDEF_MAX_ALIGN_T_HPP
 
 #include <tuna/__config.hpp>
 
@@ -22,4 +23,4 @@ using max_align_t = ::max_align_t;
 
 TUNA_NAMESPACE_END
 
-#endif  // TUNA___CSTDDEF_MAX_ALIGN_T_HPP
+#endif  // TUNA_CSTDDEF_MAX_ALIGN_T_HPP

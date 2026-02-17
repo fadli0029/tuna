@@ -6,8 +6,8 @@
 // Reference: https://en.cppreference.com/w/cpp/types/size_t
 // libc++: https://github.com/llvm/llvm-project/blob/main/libcxx/include/__cstddef/size_t.h
 
-#ifndef TUNA___CSTDDEF_SIZE_T_HPP
-#define TUNA___CSTDDEF_SIZE_T_HPP
+#ifndef TUNA_CSTDDEF_SIZE_T_HPP
+#define TUNA_CSTDDEF_SIZE_T_HPP
 
 #include <tuna/__config.hpp>
 
@@ -20,4 +20,4 @@ using size_t = decltype(sizeof(int));
 
 TUNA_NAMESPACE_END
 
-#endif  // TUNA___CSTDDEF_SIZE_T_HPP
+#endif  // TUNA_CSTDDEF_SIZE_T_HPP
