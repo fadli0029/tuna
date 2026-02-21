@@ -28,4 +28,14 @@
 #define TUNA_ASSERT_COMPLETE_TYPE(T, ...) \
   static_assert(sizeof(T) >= 0 __VA_OPT__(, __VA_ARGS__))
 
+// Suppress warnings about deprecated volatile operations. C++20 deprecated
+// certain uses of volatile (volatile-qualified return types, parameters, etc.).
+// Some components like declval legitimately produce volatile-qualified return
+// types when instantiated with volatile T, which triggers -Wdeprecated-volatile.
+// #pragma GCC diagnostic works on both GCC and Clang.
+#define TUNA_SUPPRESS_DEPRECATED_PUSH \
+  _Pragma("GCC diagnostic push")     \
+  _Pragma("GCC diagnostic ignored \"-Wdeprecated\"")
+#define TUNA_SUPPRESS_DEPRECATED_POP _Pragma("GCC diagnostic pop")
+
 #endif  // TUNA_CONFIG_HPP
