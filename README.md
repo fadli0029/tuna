@@ -19,12 +19,13 @@ One last thing, you will notice that I use "I" and "we" interchangeably througho
 - `tuna` additionally implements the [named requirements](https://en.cppreference.com/w/cpp/named_req.html) as concepts. The standard describes these as prose/table-based requirements; `tuna` expresses them as actual concepts, in the spirit of a cleaner, more educational implementation.
 - ...
 
-# Credits
+# Credits/References
 
 - The C++ standard draft: [eel.is/c++draft](https://eel.is/c++draft/), the primary reference for how things should behave.
 - [cppreference.com](https://en.cppreference.com/), for its excellent documentation and examples.
 - [LLVM's libc++](https://github.com/llvm/llvm-project/tree/main/libcxx), for being an invaluable reference implementation to study and learn from.
 - CMake build infrastructure: [cpp-best-practices/cmake_template](https://github.com/cpp-best-practices/cmake_template) by Jason Turner. Files under `cmake/`, `ProjectOptions.cmake`, `Dependencies.cmake`, and `CMakePresets.json` come from that template (`myproject` renamed to `tuna`, unneeded deps stripped, etc.).
+- [C++ Templates - The Complete Guide, 2nd Edition - Vandevoorde et. al.](https://tmplbook.com/): great reference for many things during the development of this project, especially regarding type traits.
 - ...
 
 # Regarding AI Usage
@@ -55,5 +56,3 @@ Unfortunately, not every part of a project is equally fun. Some stuff is just bo
 - [ ] `tuna::expected`
 - [ ] `tuna::tuple`
 - [ ] ...
-
-`tuna` reimplements type traits incrementally, as they are needed by other components. The host standard library's `<type_traits>` may still be used directly where reimplementation adds no value (e.g. traits that are thin wrappers around compiler builtins).
