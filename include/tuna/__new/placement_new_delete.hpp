@@ -21,6 +21,11 @@
 // constexpr evaluator handles allocation through ::operator new(size_t)
 // internally, but placement new goes through a different path that isn't
 // supported in constant expressions yet.
+// The size_t parameter is unused here (since placement new doesn't allocate),
+// it just returns the pointer. But every operator new form must have size_t as
+// its first parameter because the compiler fills it in with sizeof(T) at the
+// call site. i.e.: it's a uniform signature convention, not a per-overload
+// choice.
 [[nodiscard]] inline void* operator new(std::size_t, void* ptr) noexcept {
   return ptr;
 }
